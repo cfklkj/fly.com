@@ -2,12 +2,11 @@ package chess
 
 import "fmt"
 
-type PiecesName int
-
 type ChessStatu struct {
 	pieces PiecesName
 	pt     Point
-	deaded bool
+	deaded bool //已亡
+	used   bool //已使用
 }
 
 type ChessPieces struct {
@@ -40,10 +39,10 @@ func (c *ChessStatu) IsOwnPieces(pieces PiecesName) bool {
 	if pieces == Null { //没有棋子
 		return false
 	}
-	if c.pieces <= R_jiang && pieces <= R_jiang { //红方
+	if c.pieces <= R_bin5 && pieces <= R_bin5 { //红方
 		return true
 	}
-	if c.pieces > R_jiang && pieces > R_jiang { //黑方
+	if c.pieces > R_bin5 && pieces > R_bin5 { //黑方
 		return true
 	}
 	return false //敌对方
@@ -57,4 +56,27 @@ func (c *ChessPieces) buildChessPieces() {
 		c.pieces[chessStatu.pieces] = chessStatu
 	}
 	fmt.Println("BuildChessPieces", c.pieces)
+}
+
+//摆设棋子
+func (c *ChessPieces) SetPoint(pieces PiecesName, pt Point) bool {
+	chessStatu, ok := c.pieces[pieces]
+	if ok {
+		chessStatu.pt = pt
+		chessStatu.pieces = pieces
+		return true
+	}
+	return false
+}
+
+//获取可用棋子
+func (c *ChessPieces) GetPieces(piecesName string, isRed bool) PiecesName {
+	for pieces, statu := range c.pieces {
+		if pieces.IsThisPieces(piecesName) && (isRed == pieces.IsRed() || !isRed == pieces.IsBlack()) {
+			if !statu.deaded {
+				return pieces
+			}
+		}
+	}
+	return Null
 }
