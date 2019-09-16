@@ -15,12 +15,18 @@ import (
 type ChessMap struct {
 	Board  *ChessBoard
 	Pieces *ChessPieces
+	Record *ChessMapRecord
+	Move   *ChessMove
+	Run    *ChessRun
 }
 
 func NewChessMap() *ChessMap {
 	ret := new(ChessMap)
 	ret.Board = NewChessBoard()
 	ret.Pieces = NewChessPieces()
+	ret.Record = NewChessMapRecord()
+	ret.Move = NewChessMove()
+	ret.Run = NewChessRun()
 	return ret
 }
 
@@ -29,8 +35,60 @@ func (c *ChessMap) setToBoar(pieces PiecesName, pt Point) bool {
 	if !c.Board.FindPoint(pt) {
 		return false
 	}
+	c.delFromBoar(pt)
 	c.Board.SetPieces(pieces, pt)
 	c.Pieces.SetPoint(pieces, pt)
+	c.Record.AddPieces(pieces)
+	return true
+}
+
+//移除棋子
+func (c *ChessMap) delFromBoar(pt Point) bool {
+	pieces := c.Board.GetPointPieces(pt)
+	if pieces == OverStep {
+		return false
+	}
+	fmt.Println("delFromBoar", pieces)
+	c.Pieces.EatUp(pieces)
+	c.Record.DelPieces(pieces)
+	return true
+}
+
+//将棋子设置到棋盘  走棋
+func (c *ChessMap) MoveChess(srcPt Point, directPt Point) bool {
+	if directPt == srcPt {
+		fmt.Print("1")
+		return false
+	}
+	if !c.Board.FindPoint(directPt) {
+		fmt.Print("1")
+		return false
+	}
+	pieces := c.Board.GetPointPieces(srcPt)
+	if pieces == OverStep {
+		fmt.Print("1")
+		return false
+	}
+	statu := c.Pieces.GetPiecesStatu(pieces)
+	if statu == nil {
+		fmt.Print("2")
+		return false
+	}
+	relationPts := c.Move.Move(*statu, directPt) //
+	if relationPts == nil {                      //移动位置错误
+		fmt.Println("3", *statu, directPt)
+		return false
+	}
+	if relationPts.directPt != directPt { //目标点检测错误
+		fmt.Print("4", relationPts.directPt, directPt)
+		return false
+	}
+	if !c.Run.MoveCheck(statu, c.Board, relationPts) { //不可移动到目标点
+		fmt.Print("5")
+		return false
+	}
+	c.Board.DelPointPieces(srcPt)
+	c.setToBoar(pieces, directPt)
 	return true
 }
 

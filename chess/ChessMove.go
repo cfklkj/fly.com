@@ -1,5 +1,7 @@
 package chess
 
+import "fmt"
+
 /*
 移动棋子关系点
 */
@@ -16,7 +18,65 @@ func NewChessMove() *ChessMove {
 	return ret
 }
 
-//马
+//移动
+func (c *ChessMove) Move(chess ChessStatu, pt Point) *RelationPoints {
+
+	direct, offset := c.getDirection(chess, pt)
+	offset *= -1
+	pieces := chess.GetPieces()
+	fmt.Println(pieces.ChessString(), direct, offset)
+	switch pieces.ChessString() {
+	case "军":
+		return c._Ju(chess, direct, offset)
+	case "将":
+		return c._Jiang(chess, direct)
+	case "炮":
+		return c._Pao(chess, direct, offset)
+	case "兵":
+		return c._Bing(chess, direct)
+	case "马":
+		return c._Ma(chess, direct)
+	case "象":
+		return c._Xiang(chess, direct)
+	case "仕":
+		return c._Bing(chess, direct)
+	}
+	return nil
+}
+
+//获取移动方向
+func (c *ChessMove) getDirection(chess ChessStatu, pt Point) (int, int) { //direct offset
+	fmt.Println("getDirection", pt, chess.pt)
+	if pt.Row == 0 {
+		if chess.pt.Col > pt.Col {
+			return L, chess.pt.Col - pt.Col
+		} else {
+			return R, chess.pt.Col - pt.Col
+		}
+	}
+	if pt.Col == 0 {
+		if chess.pt.Row > pt.Row {
+			return U, chess.pt.Row - pt.Row
+		} else {
+			return D, chess.pt.Row - pt.Row
+		}
+	}
+	if chess.pt.Row > pt.Row {
+		if chess.pt.Col > pt.Col {
+			return LU, 0
+		} else {
+			return LD, 0
+		}
+	} else {
+		if chess.pt.Col > pt.Col {
+			return RU, 0
+		} else {
+			return RD, 0
+		}
+	}
+}
+
+//军
 func (c *ChessMove) _Ju(chess ChessStatu, direction int, offset int) *RelationPoints {
 	c.pts.checkPts = []Point{}
 	switch direction {

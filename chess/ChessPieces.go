@@ -29,8 +29,8 @@ func NewChessPieces() *ChessPieces {
 //移动棋子
 func (c *ChessStatu) GetOffsetPoint(offsetLevel int, offsetVertical int) Point {
 	var pt Point
-	pt.X = c.pt.X + offsetLevel
-	pt.Y = c.pt.Y + offsetVertical
+	pt.Row = c.pt.Row + offsetVertical //垂直  行
+	pt.Col = c.pt.Col + offsetLevel    //水平  列
 	return pt
 }
 
@@ -64,9 +64,30 @@ func (c *ChessPieces) SetPoint(pieces PiecesName, pt Point) bool {
 	if ok {
 		chessStatu.pt = pt
 		chessStatu.pieces = pieces
+		chessStatu.deaded = false
 		return true
 	}
 	return false
+}
+
+//吃掉棋子
+func (c *ChessPieces) EatUp(pieces PiecesName) bool {
+	chessStatu, ok := c.pieces[pieces]
+	if ok {
+		chessStatu.deaded = true
+		return true
+	}
+	return false
+}
+
+//获取棋子信息
+func (c *ChessPieces) GetPiecesStatu(pieces PiecesName) *ChessStatu {
+	chessStatu, ok := c.pieces[pieces]
+	if ok {
+		return &chessStatu
+	}
+	return nil
+
 }
 
 //获取可用棋子

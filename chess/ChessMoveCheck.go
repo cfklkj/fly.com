@@ -1,5 +1,7 @@
 package chess
 
+import "fmt"
+
 /*
 走法限制
 */
@@ -16,20 +18,45 @@ func NewChessRun() *ChessRun {
 	return ret
 }
 
+//移动判断
+func (c *ChessRun) MoveCheck(chess *ChessStatu, board *ChessBoard, points *RelationPoints) bool {
+	pieces := chess.GetPieces()
+	switch pieces.ChessString() {
+	case "军":
+		return c._Ju(chess, board, points)
+	case "将":
+		return c._Jiang(chess, board, points)
+	case "炮":
+		return c._Pao(chess, board, points)
+	case "兵":
+		return c._Bing(chess, board, points)
+	case "马":
+		return c._Ma(chess, board, points)
+	case "象":
+		return c._Xiang(chess, board, points)
+	case "仕":
+		return c._Bing(chess, board, points)
+	}
+	return false
+}
+
 //军
 func (c *ChessRun) _Ju(chess *ChessStatu, board *ChessBoard, points *RelationPoints) bool {
 
 	directPieces := board.GetPointPieces(points.directPt)
 	if directPieces == OverStep { //越界
+		fmt.Print("_Ju1")
 		return false
 	}
 	if chess.IsOwnPieces(directPieces) { //目标点
+		fmt.Print("_Ju2")
 		return false
 	}
 	//路径点
 	for _, pt := range points.checkPts {
 		pieces := board.GetPointPieces(pt)
 		if pieces != Null {
+			fmt.Print("_Ju3")
 			return false
 		}
 	}

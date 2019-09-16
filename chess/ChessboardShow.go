@@ -64,8 +64,8 @@ func (c *ChessBoard) showChessPt(pts *BoardPoint) {
 		if i > 1 {
 			fmt.Print(" - ")
 		}
-		Pt.X += 1
-		Pt.Y += 1
+		Pt.Row += 1
+		Pt.Col += 1
 		fmt.Printf("%1d", Pt)
 
 		i++

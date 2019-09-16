@@ -43,7 +43,7 @@ func (c *BoardPoint) addPointTolist(x, y int) {
 }
 func (c *BoardPoint) addPoints(pts []Point) {
 	for _, pt := range pts {
-		c.pt[pt] = PiecesName(pt.X + pt.Y)
+		c.pt[pt] = PiecesName(pt.Row + pt.Col)
 	}
 }
 
@@ -92,9 +92,9 @@ func (c *ChessBoard) FindPoint_jiang(pieces PiecesName, pt Point) bool {
 //兵
 func (c *ChessBoard) FindPoint_bian(chess *ChessStatu, pt Point) bool {
 	if chess.pieces > R_bin5 { //黑
-		return chess.pt.Y >= pt.Y
+		return chess.pt.Col >= pt.Col
 	} else { //红
-		return chess.pt.Y <= pt.Y
+		return chess.pt.Col <= pt.Col
 	}
 }
 
@@ -161,4 +161,9 @@ func (c *ChessBoard) SetPieces(pieces PiecesName, point Point) {
 //获取棋盘点棋子
 func (c *ChessBoard) GetPointPieces(point Point) PiecesName {
 	return c.points_chessBoard.GetPointPieces(point)
+}
+
+//移除棋盘棋子
+func (c *ChessBoard) DelPointPieces(pt Point) {
+	c.points_chessBoard.SetPointPieces(pt, Null)
 }

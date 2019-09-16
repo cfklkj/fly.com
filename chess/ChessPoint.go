@@ -1,12 +1,12 @@
 package chess
 
 type Point struct {
-	X, Y int
+	Row, Col int
 }
 
-func NewPoint(X, Y int) *Point {
+func NewPoint(Row, Col int) *Point {
 	ret := new(Point)
-	ret.X = X
-	ret.Y = Y
+	ret.Row = Row
+	ret.Col = Col
 	return ret
 }
